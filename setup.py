@@ -85,7 +85,7 @@ if path.exists('optional_requirements.json'):
 local_requirements = [
 ]
 
-# Standard requirements
+# Standard requirements TEST
 requirements = [
     'BACpypes==0.13.2',
     'gevent>=0.13,<2',
