@@ -124,7 +124,10 @@ def bootstrap(dest, prompt='(volttron)', version=None, verbose=None):
     import shutil
     import tarfile
     import tempfile
-    import urllib2
+    if sys.version[0] == '2':
+        import urllib2 
+    else:
+        import urllib.request as urllib2
 
     class EnvBuilder(object):
         '''Virtual environment builder.
@@ -159,6 +162,8 @@ def bootstrap(dest, prompt='(volttron)', version=None, verbose=None):
                         '?:action=doap&name=virtualenv')
             with contextlib.closing(self._fetch(doap_url)) as response:
                 doap_xml = response.read()
+                if sys.version[0] == '3':
+                    doap_xml = doap_xml.decode("utf-8")
             self.version = re.search(
                 r'<revision>([^<]*)</revision>', doap_xml).group(1)
             return self.version
@@ -266,11 +271,6 @@ def main(argv=sys.argv):
         sys.stderr.write('%s: error: refusing to run as root to prevent '
                          'potential damage.\n' % os.path.basename(argv[0]))
         sys.exit(77)
-
-    # Unfortunately, many dependencies are not yet available in Python3.
-    if sys.version_info[:2] != (2, 7):
-        sys.stderr.write('error: Python 2.7 is required\n')
-        sys.exit(1)
 
     # Build the parser
     python = os.path.join('$VIRTUAL_ENV',
