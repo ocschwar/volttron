@@ -87,16 +87,21 @@ local_requirements = [
 
 # Standard requirements TEST
 requirements = [
-    'BACpypes==0.13.2',
+    'BACpypes',
     'gevent>=0.13,<2',
     'monotonic',
     'pymodbus>=1.2,<2',
     'setuptools',
     'simplejson>=3.3,<4',
-    'Smap==2.0.24c780d',
     'wheel>=0.24,<2',
 ]
-
+if sys.version[0] == '2':
+    requirements += [
+    'Smap==2.0.24c780d'
+        ]
+else:
+    requirements += ['smap']
+    
 install_requires = (
     [req for req, _ in option_requirements] +
     [req for req, _ in local_requirements] +

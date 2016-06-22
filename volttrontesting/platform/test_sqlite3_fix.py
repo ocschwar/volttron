@@ -64,7 +64,7 @@ import sqlite3 as sql
 def test_sqlite_fixes():
     """This is all in a single test so we don't have to muck around with 
     reloading modules."""
-    import python_2_7_3_sqlite3 as sql_old
+    from . import python_2_7_3_sqlite3 as sql_old
     conn = sql_old.connect(':memory:', detect_types=sql_old.PARSE_DECLTYPES|sql_old.PARSE_COLNAMES)
     
     cur = conn.cursor()
@@ -81,7 +81,7 @@ def test_sqlite_fixes():
    # Verify that our private copy of sqlite3 from 2.7.3 does indeed break.
     try:
         cur.execute("select * from test")
-        print "Did not raise expected exception"
+        print("Did not raise expected exception")
         assert False
     except ValueError as e:
         assert e.message == "invalid literal for int() with base 10: '000005+00:00'"
@@ -92,7 +92,7 @@ def test_sqlite_fixes():
     
     try:
         cur.execute("select * from test")
-        print "Did not raise expected exception"
+        print("Did not raise expected exception")
         assert False
     except ValueError as e:
         assert e.message == "invalid literal for int() with base 10: '00+00'"

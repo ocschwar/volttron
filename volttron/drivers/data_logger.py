@@ -142,24 +142,24 @@ class DataLogger(driver.SmapDriver):
                         path = path_element
                     else:
                         path = path + "/" + path_element
-                    print 'Adding path:', path
+                    print('Adding path:', path)
                     if self.get_collection(path) is None:
                         self.add_collection(path)
 
                 try:
                     # Create timeseries entries
                     for ts_string in data:
-                        if 'Readings' not in data[ts_string].keys() or 'Units' not in data[ts_string].keys():
+                        if 'Readings' not in list(data[ts_string].keys()) or 'Units' not in list(data[ts_string].keys()):
                             self._push.send_multipart(['datalogger/status', '{"' + headers_mod.TO + '" : "'+sender+'"}', "Message missing required elements."])
                             break
                         ts_path = path + '/' + ts_string
                         ts = ""
-                        if ts_path in self.known_timeseries.keys():
+                        if ts_path in list(self.known_timeseries.keys()):
                             ts = self.known_timeseries[ts_path]
                         else:
                             units = data[ts_string]['Units']
                             dtype = 'double'
-                            if 'data_type' in data[ts_string].keys():
+                            if 'data_type' in list(data[ts_string].keys()):
                                 dtype = data[ts_string]['data_type']
                             ts = self.add_timeseries(ts_path, units, data_type=dtype)
                             self.known_timeseries[ts_path] = ts

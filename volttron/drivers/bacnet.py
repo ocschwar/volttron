@@ -61,15 +61,15 @@ import os
 
 from csv import DictReader
 from collections import defaultdict
-from ConfigParser import ConfigParser
+from configparser import ConfigParser
 
-from Queue import Queue, Empty
+from queue import Queue, Empty
 
 from twisted.internet.defer import Deferred
 from twisted.python.failure import Failure
 from twisted.internet import reactor
 
-from base import BaseSmapVolttron, BaseRegister, BaseInterface
+from .base import BaseSmapVolttron, BaseRegister, BaseInterface
 
 from bacpypes.debugging import class_debugging, ModuleLogger
 from bacpypes.task import RecurringTask
@@ -252,7 +252,7 @@ class BACnet_application(BIPSimpleApplication, RecurringTask):
                         error_obj = readResult.propertyAccessError
                         
                         msg = 'ERROR DURRING SCRAPE (Class: {0} Code: {1})'
-                        print msg.format(error_obj.errorClass, error_obj.errorCode)
+                        print(msg.format(error_obj.errorClass, error_obj.errorCode))
                         
                     else:
                         # here is the value
@@ -336,7 +336,7 @@ class BACnetRegister(BaseRegister):
         try:
             value = block_for_sync(self.get_state_async(bac_app, address), 5)
         except IOError as e:
-            print "Error with device communication:", e
+            print("Error with device communication:", e)
         return value 
     
     def set_state_async_callback(self, result, set_value):
@@ -370,7 +370,7 @@ class BACnetRegister(BaseRegister):
         try:
             value = block_for_sync(self.set_state_async(bac_app, address, value), 5)
         except IOError as e:
-            print "Error with device communication:", e
+            print("Error with device communication:", e)
         return value
 
         
@@ -423,11 +423,11 @@ class BACnetInterface(BaseInterface):
         if this_application is not None:
             return
         
-        print 'seg_supported', seg_supported
-        print 'max_apdu_len', max_apdu_len
-        print 'obj_id', obj_id
-        print 'obj_name', obj_name
-        print 'ven_id', ven_id
+        print('seg_supported', seg_supported)
+        print('max_apdu_len', max_apdu_len)
+        print('obj_id', obj_id)
+        print('obj_name', obj_name)
+        print('ven_id', ven_id)
         
         #Check to see if they gave a valid apdu length.
         if encode_max_apdu_response(max_apdu_len) is None:
@@ -485,7 +485,7 @@ class BACnetInterface(BaseInterface):
     def scrape_all_callback(self, result):
         result_dict={}
         
-        for prop_tuple, value in result.iteritems():
+        for prop_tuple, value in result.items():
             name = self.reverse_point_map[prop_tuple]
             result_dict[name] = value        
         
@@ -493,7 +493,7 @@ class BACnetInterface(BaseInterface):
         
     def scrape_all(self):
         read_access_spec_list = []
-        for obj_data, properties in self.object_property_map.iteritems():
+        for obj_data, properties in self.object_property_map.items():
             obj_type, obj_inst = obj_data
             prop_ref_list = []
             for prop in properties:
@@ -587,34 +587,34 @@ if __name__ == "__main__":
     iface = BACnetInterface(sys.argv[1], sys.argv[2], config_file='test2.csv')
     
     def run_tests():    
-        print 'Test'
+        print('Test')
         r = iface.get_point_sync('RoomRealTemp2')
-        print 'RoomRealTemp2', r
+        print('RoomRealTemp2', r)
         r = iface.get_point_sync('RoomRealTemp1')
-        print 'RoomRealTemp1', r
+        print('RoomRealTemp1', r)
         r = iface.get_point_sync('OutsideAir')
-        print 'OutsideAir', r
+        print('OutsideAir', r)
         r = iface.get_point_sync('Current1')
-        print 'Current1', r
+        print('Current1', r)
         r = iface.get_point_sync('Occupied')
-        print 'Occupied', r
+        print('Occupied', r)
         
         r = iface.get_point_sync('Volt1')
-        print 'Volt1', r
+        print('Volt1', r)
         
         new_value = 55.0 if r != 55.0 else 65.0
-        print 'Writing to Volt1:', new_value
+        print('Writing to Volt1:', new_value)
         r = iface.set_point_sync('Volt1', new_value)
-        print 'Volt1 change result', r
+        print('Volt1 change result', r)
         
         #For some reason on the test device if we try to read what
         # we just wrote too quickly we'll get back the old value.
         sleep(1)
         r = iface.get_point_sync('Volt1')
-        print 'Volt1', r
+        print('Volt1', r)
         
         def printvalue(value, name):
-            print name,':'
+            print(name,':')
             pprint(value)
             
         d = iface.get_point_async('ProgrammingAnalogVariable1')

@@ -101,8 +101,7 @@ class BaseRegister(object):
     def get_description(self):
         return self.description
     
-class BaseInterface(object):
-    __metaclass__ = abc.ABCMeta
+class BaseInterface(object, metaclass=abc.ABCMeta):
     def __init__(self, **kwargs):
         super(BaseInterface, self).__init__(**kwargs)
         
@@ -120,7 +119,7 @@ class BaseInterface(object):
         return self.point_map[name]
     
     def get_register_names(self):
-        return self.point_map.keys()
+        return list(self.point_map.keys())
         
     def get_registers_by_type(self, reg_type, read_only):
         return self.registers[reg_type,read_only]
@@ -219,9 +218,7 @@ class InterfaceFloatActuator(actuate.IntegerActuator):
     def set_state(self, request, state):
         return self.interface.set_point_async(self.point_name, state)
         
-class BaseSmapVolttron(driver.SmapDriver, PublishMixin):     
-    __metaclass__ = abc.ABCMeta
-    
+class BaseSmapVolttron(driver.SmapDriver, PublishMixin, metaclass=abc.ABCMeta):     
     def setup(self, opts):
         self.interval = float(opts.get('interval',60))
         self.set_metadata('/', {'Instrument/SamplingPeriod' : str(self.interval)})
@@ -272,14 +269,14 @@ class BaseSmapVolttron(driver.SmapDriver, PublishMixin):
             
             actuator_point = '/actuators/'+point
             
-            print 'Setting up actuator point:', actuator_point
+            print('Setting up actuator point:', actuator_point)
             
             a = self.add_actuator(actuator_point, register.units, InterfaceBitActuator, 
                               setup={'point_name':point, 'interface': self.interface}) #, read_limit=1.0, write_limit=1.0)
             
             value = self.interface.get_point_sync(point)
             if value is None:
-                print("ERROR: Failed to read " + actuator_point + " interface returned None")
+                print(("ERROR: Failed to read " + actuator_point + " interface returned None"))
             else:
                 self.add(actuator_point, value)
             
@@ -288,7 +285,7 @@ class BaseSmapVolttron(driver.SmapDriver, PublishMixin):
             point = register.point_name
             actuator_point = '/actuators/'+point
             
-            print 'Setting up actuator point:', actuator_point
+            print('Setting up actuator point:', actuator_point)
             
             if register.python_type is int:
                 act_class, data_type = (InterfaceIntActuator, 'long')
@@ -306,7 +303,7 @@ class BaseSmapVolttron(driver.SmapDriver, PublishMixin):
             if value is not None:
                 self.add(actuator_point, value)
             else:
-                print("ERROR: Failed to read " + actuator_point + " interface returned None")
+                print(("ERROR: Failed to read " + actuator_point + " interface returned None"))
         
     @abc.abstractmethod
     def get_interface(self, opts):
@@ -328,13 +325,13 @@ class BaseSmapVolttron(driver.SmapDriver, PublishMixin):
             headers_mod.DATE: now,
         }
          
-        for point, value in results.iteritems():
+        for point, value in results.items():
             if isinstance(value, bool):
                 value = int(value)
             self.add('/'+point, value)
             
         try:    
-            for point, value in results.iteritems():
+            for point, value in results.items():
                 if isinstance(value, bool):
                     value = int(value)
                 depth, breadth = self.get_paths_for_point('/'+point)
@@ -348,7 +345,7 @@ class BaseSmapVolttron(driver.SmapDriver, PublishMixin):
 
     
     def read_errback(self, failure):
-        print "Data scrape failed:", str(failure)
+        print("Data scrape failed:", str(failure))
         return failure
  
     def read(self):

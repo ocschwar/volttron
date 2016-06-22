@@ -53,7 +53,7 @@ under Contract DE-AC05-76RL01830
 
 import os
 import abc
-from base import BaseSmapVolttron, BaseInterface, BaseRegister
+from .base import BaseSmapVolttron, BaseInterface, BaseRegister
 from csv import DictReader
 import struct
 
@@ -61,8 +61,7 @@ path = os.path.dirname(os.path.abspath(__file__))
 default_config = os.path.join(path, "example.csv")
 default_directory = os.path.dirname(os.path.abspath(__file__))
 
-class FileRegister(BaseRegister):
-    __metaclass__ = abc.ABCMeta
+class FileRegister(BaseRegister, metaclass=abc.ABCMeta):
     def __init__(self, type_string, read_only, pointName, units, description = '', directory='.'):
         self.file_path = os.path.join(directory, pointName)
         
@@ -97,7 +96,7 @@ class FileRegister(BaseRegister):
         except (ValueError, IOError):
             #Build up default files.
             value = self.parse_value('0')
-            print "Creating default file for point: ", self.point_name
+            print("Creating default file for point: ", self.point_name)
             with open(self.file_path, 'w') as f:
                 f.write(str(value))
             return value
@@ -158,9 +157,9 @@ class FileInterface(BaseInterface):
             for point in self.point_map:
                 result_dict[point]=self.get_point_sync(point)
         except (IOError):
-            print ("ERROR: Failed to scrape device at " + 
+            print(("ERROR: Failed to scrape device at " + 
                    self.ip_address + ":" + str(self.port) + " " + 
-                   "ID: " + str(self.slave_id))
+                   "ID: " + str(self.slave_id)))
             return None
         
         return result_dict

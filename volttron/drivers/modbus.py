@@ -69,7 +69,7 @@ from twisted.python import log
 from pymodbus.constants import Defaults
 from pymodbus.client.async import ModbusClientProtocol
 
-from base import BaseSmapVolttron, BaseRegister, BaseInterface
+from .base import BaseSmapVolttron, BaseRegister, BaseInterface
 
 import struct
 from csv import DictReader
@@ -310,7 +310,7 @@ class ModbusInterface(BaseInterface):
         
         result = ''
         
-        for group in xrange(start, end + 1, MODBUS_READ_MAX):
+        for group in range(start, end + 1, MODBUS_READ_MAX):
             count = min(end - group + 1, MODBUS_READ_MAX)            
             response = client.read_input_registers(group, count, unit=self.slave_id) if read_only else client.read_holding_registers(group, count, unit=self.slave_id)
             if response is None:
@@ -335,7 +335,7 @@ class ModbusInterface(BaseInterface):
         
         result = []
         
-        for group in xrange(start, end + 1, MODBUS_READ_MAX):
+        for group in range(start, end + 1, MODBUS_READ_MAX):
             count = min(end - group + 1, MODBUS_READ_MAX)            
             response = client.read_discrete_inputs(group, count, unit=self.slave_id) if read_only else client.read_coils(group, count, unit=self.slave_id)
             if response is None:
@@ -360,9 +360,9 @@ class ModbusInterface(BaseInterface):
             result_dict.update(self.scrape_bit_registers(client, True))
             result_dict.update(self.scrape_bit_registers(client, False))
         except (ConnectionException, ModbusIOException, ModbusInterfaceException) as e:
-            print ("ERROR: Failed to scrape device at " + 
+            print(("ERROR: Failed to scrape device at " + 
                    self.ip_address + ":" + str(self.port) + " " + 
-                   "ID: " + str(self.slave_id) + str(e))
+                   "ID: " + str(self.slave_id) + str(e)))
             return None
         finally:
             client.close()
@@ -413,35 +413,35 @@ if __name__ == "__main__":
     from pprint import pprint
     iface = ModbusInterface('130.20.3.14')
     r = iface.get_point_sync('ReturnAirCO2')
-    print 'ReturnAirCO2', r
+    print('ReturnAirCO2', r)
     r = iface.get_point_sync('ServiceSwitch')
-    print 'ServiceSwitch', r
+    print('ServiceSwitch', r)
     r = iface.get_point_sync('ReturnAirCO2Stpt')
-    print 'ReturnAirCO2Stpt', r
+    print('ReturnAirCO2Stpt', r)
     r = iface.get_point_sync('DamperSignal')
-    print 'DamperSignal', r
+    print('DamperSignal', r)
     r = iface.get_point_sync('CoolSupplyFanSpeed1')
-    print 'CoolSupplyFanSpeed1', r
+    print('CoolSupplyFanSpeed1', r)
     r = iface.get_point_sync('ESMMode')
-    print 'ESMMode', r
+    print('ESMMode', r)
     r = iface.get_point_sync('CoolCall1')
-    print 'Occupied', r
-    print
-    print 'Writing to ESMMode:', True
+    print('Occupied', r)
+    print()
+    print('Writing to ESMMode:', True)
     r = iface.set_point_sync('ESMMode', True)
-    print 'New ESMMode:', r
-    print
-    print 'Writing to CoolSupplyFanSpeed1:', 65.0
+    print('New ESMMode:', r)
+    print()
+    print('Writing to CoolSupplyFanSpeed1:', 65.0)
     r = iface.set_point_sync('CoolSupplyFanSpeed1', 65.0)
-    print 'New CoolSupplyFanSpeed1', r
+    print('New CoolSupplyFanSpeed1', r)
     
     r = iface.scrape_all()
     pprint(r)
     
-    print 'Getting via async interface'
-    print 'ESMMode',
+    print('Getting via async interface')
+    print('ESMMode', end=' ')
     def printvalue(value):
-        print value
+        print(value)
     
     d = iface.get_point_async('ESMMode')
     d.addCallback(printvalue)
