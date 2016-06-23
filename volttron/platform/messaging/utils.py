@@ -58,8 +58,9 @@
 '''VOLTTRON platform™ messaging utilities.'''
 
 from string import Formatter
-
-
+import sys
+if sys.version[0] == '3':
+    import _string
 __all__ = ['normtopic', 'Topic']
 
 __author__ = 'Brandon Carpenter <brandon.carpenter@pnnl.gov>'
@@ -72,6 +73,8 @@ def normtopic(topic):
     if not topic:
         return topic
     comps = []
+    if sys.version[0] == '3':
+        unicode = str
     for comp in topic.split('/'):
         if comp in ('', '.'):
             continue
@@ -112,7 +115,7 @@ class TopicFormatter(Formatter):
     See the Formatter documentation for the built-in string module for
     more information on formatters and the role of each method.
     '''
-    def _vformat(self, format_string, args, kwargs, used_args, recursion_depth):
+    def _vformat(self, format_string, args, kwargs, used_args, recursion_depth,auto_arg_index=0):
         if recursion_depth < 0:
             raise ValueError('maximum string recursion exceeded')
         result = []
@@ -149,24 +152,42 @@ class TopicFormatter(Formatter):
                 obj = self.convert_field(obj, conversion)
                 format_spec = self._vformat(format_spec, args, kwargs,
                                             used_args, recursion_depth - 1)
+                if sys.version[0] == '3':
+                    format_spec=format_spec[0]
                 obj = self.format_field(obj, format_spec)
             result.append(obj)
-        return ''.join(result)
+        if sys.version[0] == '2':
+            return ''.join(result)
+        else:
+            return ''.join(result),auto_arg_index
 
     def check_unused_args(self, used_args, args, kwargs):
         for name in kwargs:
             if name not in used_args:
                 raise ValueError('unused keyword argument: {}'.format(name))
+            
+if sys.version[0] == '2':
+    topicstring = unicode
+else:
+    topicstring = str
 
-
-class Topic(unicode):
+class Topic(topicstring):
 
     def __init__(self, format_string):
         '''Perform minimal validation of names used in format fields.'''
-        for _, name, _, _ in format_string._formatter_parser():
+        if sys.version[0] == '2':
+            Iter = format_string._formatter_parser()
+        else:
+            long=int
+            Iter =  Formatter().parse(format_string)
+        for _, name, _, _ in Iter:
             if name is None:
                 continue
-            name, _ = name._formatter_field_name_split()
+            if sys.version[0] == '2':
+                name, _ = name._formatter_field_name_split()
+            
+            else:
+                name, _ = _string.formatter_field_name_split(name)            
             if isinstance(name, (int, long)) or not name:
                 raise ValueError('positional format fields are not supported;'
                                  ' use named format fields only')

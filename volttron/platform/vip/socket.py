@@ -68,12 +68,15 @@ defined in green.py.
 
 
 from __future__ import absolute_import
-
+import sys
 import base64
 import binascii
 from contextlib import contextmanager
 import urllib
-import urlparse
+if sys.version[0] == '2':
+    import urlparse
+else :
+    import urllib.parse as urlparse
 import uuid
 
 from zmq import (SNDMORE, RCVMORE, NOBLOCK, POLLOUT, DEALER, ROUTER,

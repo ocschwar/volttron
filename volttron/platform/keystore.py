@@ -63,7 +63,12 @@
 import json
 import logging
 import os
-import urlparse
+import sys
+if sys.version[0] == '2':
+    import urlparse
+else :
+    import urllib.parse as urlparse
+
 
 from zmq import curve_keypair
 

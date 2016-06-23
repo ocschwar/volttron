@@ -67,7 +67,10 @@ import os
 import sys
 import threading
 import time
-import urlparse
+if sys.version[0] == '2':
+    import urlparse
+else :
+    import urllib.parse as urlparse
 
 import gevent.event
 from zmq import green as zmq
