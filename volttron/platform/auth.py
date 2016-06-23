@@ -727,7 +727,7 @@ class AuthFile(object):
                 'roles': roles, 'version': self.version}
 
         with open(self.auth_file, 'w') as fp:
-            fp.write(jsonapi.dumps(auth, indent=2))
+            fp.write(jsonapi.dumps(auth, indent=2).decode('utf-8'))
 
 
 class AuthFileIndexError(AuthException, IndexError):
