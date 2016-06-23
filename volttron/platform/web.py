@@ -65,8 +65,7 @@ from urlparse import urlparse, urljoin
 from gevent import pywsgi
 import mimetypes
 
-from requests.packages.urllib3.connection import (ConnectionError,
-                                                  NewConnectionError)
+import requests.packages.urllib3.connection as connection
 from zmq.utils import jsonapi
 
 from .auth import AuthEntry, AuthFile
@@ -133,7 +132,7 @@ class DiscoveryInfo(object):
                 "Invalid discovery_address passed {}"
                 .format(discovery_address)
             )
-        except (ConnectionError, NewConnectionError) as e:
+        except connection.ConnectionError as e:
             raise DiscoveryError(
                 "Connection to {} not available".format(real_url)
             )
