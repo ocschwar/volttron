@@ -82,11 +82,11 @@ from .vip.socket import encode_key
 _log = logging.getLogger(__name__)
 
 
-class CouldNotRegister(StandardError):
+class CouldNotRegister(Exception):
     pass
 
 
-class DiscoveryError(StandardError):
+class DiscoveryError(Exception):
     """ Raised when a different volttron central tries to register.
     """
     pass
