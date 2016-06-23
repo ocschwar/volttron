@@ -178,8 +178,9 @@ class Topic(topicstring):
         '''Perform minimal validation of names used in format fields.'''
         if sys.version[0] == '2':
             Iter = format_string._formatter_parser()
+            numerics = (long,int)
         else:
-            long=int
+            numerics = (int,)
             Iter =  Formatter().parse(format_string)
         for _, name, _, _ in Iter:
             if name is None:
@@ -189,7 +190,7 @@ class Topic(topicstring):
             
             else:
                 name, _ = _string.formatter_field_name_split(name)            
-            if isinstance(name, (int, long)) or not name:
+            if isinstance(name, numerics) or not name:
                 raise ValueError('positional format fields are not supported;'
                                  ' use named format fields only')
             if name[:1].isdigit():
