@@ -65,6 +65,7 @@ import logging
 import os
 import random
 import re
+import sys
 
 import gevent
 from gevent.fileobject import FileObject
