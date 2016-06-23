@@ -465,13 +465,13 @@ class AuthFile(object):
             create_file_if_missing(self.auth_file)
             with open(self.auth_file) as fil:
                 # Use gevent FileObject to avoid blocking the thread
-                before_strip_comments = FileObject(fil, close=False).read()
+                before_strip_comments = FileObject(fil, close=False).read().decode("utf-8")
                 data = strip_comments(before_strip_comments)
                 if data != before_strip_comments:
                     _log.warn('Comments in %s are deprecated and will not be '
                               'preserved', self.auth_file)
                 if data:
-                    auth_data = jsonapi.loads(data)
+                    auth_data = jsonapi.loads(data.encode("utf-8"))
         except Exception:
             _log.exception('error loading %s', self.auth_file)
 
