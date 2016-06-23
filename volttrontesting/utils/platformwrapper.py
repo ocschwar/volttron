@@ -1,10 +1,15 @@
-import ConfigParser as configparser
+import sys
+
+
+if sys.version[0] == '2':
+    import ConfigParser as configparser
+else:
+    import configparser
 from contextlib import closing
 import json
 import logging
 import os
 import shutil
-import sys
 import tempfile
 import time
 
