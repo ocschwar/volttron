@@ -66,6 +66,10 @@ __all__ = ['normtopic', 'Topic']
 __author__ = 'Brandon Carpenter <brandon.carpenter@pnnl.gov>'
 __copyright__ = 'Copyright (c) 2015, Battelle Memorial Institute'
 __license__ = 'FreeBSD'
+if sys.version[0] == '3':
+    stringtypes = (str,)
+else:
+    stringtypes = (str,unicode)
 
 
 def normtopic(topic):
@@ -73,8 +77,6 @@ def normtopic(topic):
     if not topic:
         return topic
     comps = []
-    if sys.version[0] == '3':
-        unicode = str
     for comp in topic.split('/'):
         if comp in ('', '.'):
             continue
@@ -82,7 +84,7 @@ def normtopic(topic):
             comps.pop()
         else:
             comps.append(comp)
-    return (u'/' if isinstance(topic, unicode) else '/').join(comps)
+    return (u'/' if isinstance(topic, stringtypes) else '/').join(comps)
 
 
 class TopicFormatter(Formatter):
