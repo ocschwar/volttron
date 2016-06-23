@@ -60,7 +60,11 @@ import logging
 import os
 import re
 import requests
-from urlparse import urlparse, urljoin
+import sys
+if sys.version[0] == '2':
+    from urlparse import urlparse, urljoin
+else:
+    from urllib.parse import urlparse, urljoin
 
 from gevent import pywsgi
 import mimetypes
