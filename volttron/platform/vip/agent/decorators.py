@@ -158,7 +158,7 @@ class dualmethod(object):
             self.__doc__ = fclass.__doc__
 
     def __get__(self, instance, owner):
-        '''Descriptor getter method.
+        '''Descriptor getter method. XXXXX
 
         See Python descriptor documentation.'''
         if instance is None:
@@ -170,7 +170,7 @@ class dualmethod(object):
         if self.finstance is None:
             if self.fclass is None:
                 raise AttributeError('no instance or class method is set')
-            return MethodType(self.fclass, owner)
+            return MethodType(self.fclass, instance)
         return MethodType(self.finstance, instance)
 
     def instancemethod(self, finstance):
