@@ -67,6 +67,8 @@ import os
 import sys
 import threading
 import time
+import six
+# TODO: move to six
 if sys.version[0] == '2':
     import urlparse
 else :
@@ -272,10 +274,10 @@ class BasicCore(object):
         current.link(lambda glt: self._async.stop())
 
         looper = self.loop()
-        looper.next()
+        six.advance_iterator(looper)
         self.onsetup.send(self)
 
-        loop = looper.next()
+        loop = six.advance_iterator(looper)
         if loop:
             current.link(lambda glt: loop.kill())
         scheduler = gevent.spawn(schedule_loop)
