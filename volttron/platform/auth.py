@@ -291,8 +291,12 @@ class AuthService(Agent):
         """
         return self._get_authorizations(user_id, 2)
 
+if sys.version[0] == '3':
+    topicstring = str
+else:
+    topicstring = unicode
 
-class String(unicode):
+class String(topicstring):
     def __new__(cls, value):
         obj = super(String, cls).__new__(cls, value)
         if isregex(obj):
