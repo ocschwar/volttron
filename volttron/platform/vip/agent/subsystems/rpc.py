@@ -63,6 +63,7 @@ import os
 import sys
 import traceback
 import weakref
+from six import string_types
 
 import gevent.local
 from gevent.event import AsyncResult
@@ -276,7 +277,7 @@ class RPC(SubsystemBase):
 
     @export.classmethod
     def export(cls, name=None):   # pylint: disable=no-self-argument
-        if not isinstance(name, basestring):
+        if not isinstance(name, string_types):
             method, name = name, name.__name__
             annotate(method, set, 'rpc.exports', name)
             return method

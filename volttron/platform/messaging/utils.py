@@ -61,15 +61,13 @@ from string import Formatter
 import sys
 if sys.version[0] == '3':
     import _string
+from six import string_types
+
 __all__ = ['normtopic', 'Topic']
 
 __author__ = 'Brandon Carpenter <brandon.carpenter@pnnl.gov>'
 __copyright__ = 'Copyright (c) 2015, Battelle Memorial Institute'
 __license__ = 'FreeBSD'
-if sys.version[0] == '3':
-    stringtypes = (str,)
-else:
-    stringtypes = (str,unicode)
 
 
 def normtopic(topic):
@@ -84,7 +82,7 @@ def normtopic(topic):
             comps.pop()
         else:
             comps.append(comp)
-    return (u'/' if isinstance(topic, stringtypes) else '/').join(comps)
+    return (u'/' if isinstance(topic, string_types) else '/').join(comps)
 
 
 class TopicFormatter(Formatter):
@@ -169,10 +167,11 @@ class TopicFormatter(Formatter):
             if name not in used_args:
                 raise ValueError('unused keyword argument: {}'.format(name))
             
-if sys.version[0] == '2':
-    topicstring = unicode
-else:
+if sys.version[0] == '3':
     topicstring = str
+else:
+    topicstring = unicode
+
 
 class Topic(topicstring):
 
