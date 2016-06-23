@@ -394,17 +394,17 @@ def start_volttron_process(opts):
     opts.subscribe_address = config.expandall(opts.subscribe_address)
     opts.vip_address = [config.expandall(addr) for addr in opts.vip_address]
     opts.vip_local_address = config.expandall(opts.vip_local_address)
-    import urlparse
+    from six import urlparse
     if opts.bind_web_address:
         parsed = urlparse.urlparse(opts.bind_web_address)
         if not parsed.scheme:
-            raise StandardError(
+            raise ValueError(
                 'bind-web-address must begin with http or https.')
         opts.bind_web_address = config.expandall(opts.bind_web_address)
     if opts.volttron_central_address:
         parsed = urlparse.urlparse(opts.volttron_central_address)
         if not parsed.scheme:
-            raise StandardError(
+            raise ValueError(
                 'volttron-central-address must begin with http or https.')
         opts.volttron_central_address = config.expandall(
             opts.volttron_central_address)
