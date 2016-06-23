@@ -115,6 +115,12 @@ class TopicFormatter(Formatter):
     See the Formatter documentation for the built-in string module for
     more information on formatters and the role of each method.
     '''
+    def vformat(self,format_string, args, kwargs):
+        used_args = set()
+        result, _ = self._vformat(format_string, args, kwargs, used_args, 2)
+        self.check_unused_args(used_args, args, kwargs)
+        return result
+
     def _vformat(self, format_string, args, kwargs, used_args, recursion_depth,auto_arg_index=0):
         if recursion_depth < 0:
             raise ValueError('maximum string recursion exceeded')
@@ -151,15 +157,10 @@ class TopicFormatter(Formatter):
             else:
                 obj = self.convert_field(obj, conversion)
                 format_spec = self._vformat(format_spec, args, kwargs,
-                                            used_args, recursion_depth - 1)
-                if sys.version[0] == '3':
-                    format_spec=format_spec[0]
+                                            used_args, recursion_depth - 1)[0]
                 obj = self.format_field(obj, format_spec)
             result.append(obj)
-        if sys.version[0] == '2':
-            return ''.join(result)
-        else:
-            return ''.join(result),auto_arg_index
+        return ''.join(result),auto_arg_index
 
     def check_unused_args(self, used_args, args, kwargs):
         for name in kwargs:
